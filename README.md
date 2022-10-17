@@ -1,2 +1,2 @@
 # Graficos-COVID
-Script com dados relcionados aos novos casos de COVID-Europa
+Script com dados relacionados aos novos casos de COVID-Europa
