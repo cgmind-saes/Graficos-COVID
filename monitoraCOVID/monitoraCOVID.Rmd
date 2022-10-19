@@ -1,0 +1,119 @@
+---
+title: "Relatório de Monitoramento COVID-19"   
+subtitle: "Nova onda de COVID?"
+author: "Ricardo Kaminski, Isis Santos, Rodrigo Borges"
+date: "`r Sys.Date()`"
+### Uncomment the following line if a summary should be shown after the title 
+# abstract: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr."
+
+### Comment or remove the following two lines if NO references are used
+bibliography: [bib/references.bib, bib/packages.bib] # Path to bibliography files 
+csl: bib/ibict-abnt.csl                            # Path to reference style file
+
+### Settings for rendering the document:
+output: 
+  cgmindmodelos::word_doc:
+    toc: false
+    language: "en"  # alternative: "de" for German
+    font: "Helvetica" # alternative: "TheSansUHH" 
+### Uncomment the next line if 'language: "de" ' and 'toc: true'
+# toc-title: "Inhaltsverzeichnis"    
+---
+
+```{r setup, include = FALSE}
+# settings --> keep this chunk as it is!
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, 
+  warning = FALSE, error = FALSE, cache = TRUE,
+  fig.path='figs/', cache.path = 'cache/')
+```
+
+```{r load-packages, include = FALSE}
+# Load all your packages that you need later
+library(knitr)
+source("../requ.R")
+```
+
+```{r generate-package-refs, include=FALSE}
+# Automatically create a bib database for R packages used above
+knitr::write_bib(
+  x = c(.packages(), 'bookdown', 'rmarkdown', 'covid19br',
+    # Add here now all packages that are loaded above:
+    'knitr'), 
+  file = 'bib/packages.bib')
+```
+
+```{r dados-precalcs,include=F}
+graf_01 <- readRDS("../resultados/g0_dados_europa.rds")
+
+graf_02 <- readRDS("../resultados/g2_dados_paises_europa.rds")
+```
+
+#Introdução
+
+Este relatório apresenta informações sistematizadas pela equipe da Coordenação-Geral de Monitoramento de Indicadores da Atenção Especializada à Saúde (CGMIND/SAES/MS) para utilização interna no acompanhamento epidemiológico da pandemia por Covid-19 na etapa contemporânea,passados os momentos mais críticos e emergenciais para a saúde público.
+
+Os objetivos são responder às seguintes questões para Europa e Brasil:
+
+-   Está em curso mais uma onda de infecções?
+
+-   Em caso afirmativo, como essa onda se comporta relativamente às duas últimas?
+
+As análises utilizaram informações publicas internacionais [@dongInteractiveWebbasedDashboard2020] e nacionais[@R-covid19br]
+
+# Uma nova onda de COVID?
+
+Notícias recentes sugerem a existência de uma nova onda de infecções por SARS-COV2[@2022a]. Utilizando método de quebras estruturais tradicional puramente na série de novos casos, e método proposto recentemente para o período mais recente[@otto2022], chegamos ao gráfico 1:
+
+```{r grafonda,fig.width=12, fig.height=10}
+
+graf_01+ggtitle("Gráfico 1 - Novos casos de COVID-19 na Europa e ondas identificadas por meio de testes de quebra - 2020 a 2022")
+```
+
+## Evolução recente na Europa
+
+O gráfico abaixo mostra a evolução do acumulado de casos para os países cuja população supõe mais de 3% da população europeia.
+
+No acumulado de casos o ângulo da subida de novos casos aumenta significativamente para França e Alemanha, os mais populosos, ou mostra forte aceleração, no caso da Itália, além de Reino Unido e Espanha, com velocidades moderadas de novos casos.
+
+A média móvel de casos nas últimas 5 semanas até 13 de outubro subiu 90% na região.
+
+```{r graf_eur_2,fig.width=12, fig.height=10}
+
+graf_02+ggtitle("Gráfico 2 - Total de casos de COVID-19 - Países selecionados da Europa - 2020 a 2022")
+```
+
+# E no Brasil?
+
+O maior registro de notificações de casos novos em um único dia (298.408 casos) ocorreu no dia 3 de fevereiro de 2022 e de novos óbitos (4.249 óbitos), em 8 de abril de 2021.
+
+## Evolução recente no Brasil
+
+###Casos
+
+###Hospitalizações
+
+###Mortes
+
+# Características da nova onda em curso na Europa
+
+## As duas últmas ondas
+
+###Casos
+
+###Hospitalizações
+
+###Mortes
+
+## Comparativo de fases similares de cada onda
+
+## Software
+
+Todas as análises foram realizadas utilizando o software R (version `r paste(R.Version()$major, R.Version()$minor, sep = ".")`) [@R-base]. Este relatório, incluindo as tabelas, foi gerando utilizando os pacotes 'bookdown' (version `r packageVersion("bookdown")`) [@R-bookdown], 'rmarkdown' (version `r packageVersion("rmarkdown")`) [@R-rmarkdown], and 'knitr' (version `r packageVersion("knitr")`) [@R-knitr].
+
+<!-- Vai quebrar a página (LaTeX code) -->
+
+\newpage
+
+# References
+
+<!-- Todas as referências serão colocadas aqui automaticamente -->
