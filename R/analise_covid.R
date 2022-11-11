@@ -19,7 +19,7 @@ plota_epids <- function(incid,coldata = ufs_m_movel_e_tx$date) {
 
 #Dados gerais
 dados_covid <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
-
+dados_covid$location <- countrycode(dados_covid$location,origin = "country.name.en",destination="cldr.short.pt")
 ##Europa 
 #rworldmap
 paises_europa <- unlist(countryExData%>%dplyr::filter(EPI_regions == "Europe")%>%select(ISO3V10))
@@ -92,14 +92,34 @@ tot_eur_pgraf <- ggplot(covid_eu_c%>%dplyr::filter(iso_code %in% eur_pops_rel),a
 saveRDS(tot_eur_pgraf,"resultados/g2_dados_paises_europa.rds")
 
 
+medsem <- function(x){
+  frollmean(x,n=7,align="right",na.rm=T)
+}
 
 
 
+hos_mort <- dados_covid%>%
+  filter(iso_code %in% eur_pops_rel)%>%select(date,location,hosp_patients,icu_patients_per_million,new_deaths_smoothed_per_million)%>%
+  group_by(location,date)
 
 
+mortesgr <- ggplot(hos_mort%>%filter(year(date)>2020),aes(date,new_deaths_smoothed_per_million,col=location))+geom_line()+
+  theme_minimal()+theme(panel.grid.minor = element_blank(),axis.text.x = element_text(angle=30))+
+  scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
+  scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
+  ylab("Novos óbitos por COVID-19 por milhão de hab.")+xlab("Periodo")
 
 
+uti_covids <- ggplot(hos_mort%>%filter(year(date)>2020),aes(date,icu_patients_per_million,col=location))+geom_line()+
+  theme_minimal()+theme(panel.grid.minor = element_blank(),axis.text.x = element_text(angle=30))+
+  scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
+  scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
+  ylab("Internados UTI por COVID-19 por milhão de hab.")+xlab("Periodo")
 
+
+saveRDS(mortesgr,"resultados/mortes_paises_eur.rds")
+
+saveRDS(uti_covids,"resultados/uti_eur.rds")
 ###Brasil
 
 
@@ -119,20 +139,23 @@ brgraftot <- ggplot(covid_br,aes(date,accumCases))+
   ylab("Total de Casos")+xlab("Período")
 
 
-brgrafnovos <- ggplot(covid_br,aes(date,newCases))+
+covid_br%<>%mutate(media_movel_semanal_novos = frollmean(newCases,6,align="right",na.rm=T))
+
+brgrafnovos <- ggplot(covid_br,aes(date,media_movel_semanal_novos))+
   geom_line()+theme_minimal()+
   theme(panel.grid.minor = element_blank(),axis.text.x = element_text(angle=30))+
   scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
   scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
-  ylab("Novos Casos")+xlab("Período")
+  ylab("Novos Casos")+xlab("Periodo")
 
-
+saveRDS(brgrafnovos,"resultados/grafbr_novos.rds")
 
 
 ##Nível Estadual
 
 covid_br_UF <- readRDS(url("https://github.com/dest-ufmg/covid19repo/blob/master/data/states.rds?raw=true",method="wininet"))
 
+covid_br_UF%<>%group_by(state)%>%mutate(soma_movel_semanal = frollsum(newCases,7,align="right"),na.rm=T)
 ##Geral Estadual
 
 brufgrafnovos <- ggplot(covid_br_UF,aes(date,soma_movel_semanal,col=state))+
@@ -143,26 +166,39 @@ brufgrafnovos <- ggplot(covid_br_UF,aes(date,soma_movel_semanal,col=state))+
   ylab("Média móvel semanal de novos casos")+xlab("Período")
 
 
-brufgraftot <- ggplot(covid_br_UF,aes(date,accumCases,col = state))+
+
+covid_br_UF$state <- factor(covid_br_UF$state, levels = br_pops$state)
+###UFs populosas
+
+
+br_pops <- unique(covid_br_UF%>%select(state, pop)%>%arrange(desc(pop)))
+
+br_pops$props_pos <- prop.table(br_pops$pop)
+
+br_pops_rel <- (br_pops%>%filter(props_pos>0.03))$state
+
+
+
+brufgraftot <- ggplot(covid_br_UF%>%filter(state %in% br_pops_rel),aes(date,accumCases,col = state))+
   geom_line()+theme_minimal()+
   theme(panel.grid.minor = element_blank(),axis.text.x = element_text(angle=30))+
   scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
   scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
-  ylab("Total de Casos")+xlab("Período")
+  ylab("Total de Casos")+xlab("Periodo")
 
-
+saveRDS(brufgraftot,"resultados/grafbr_uf_tots.rds")
 
 {##Adicionar últimos valores DF
-df4ults <- as.data.frame(t(replicate(4,unlist(last(covid_br_UF)))))
-
-df4ults$date <- as.Date(c("2022-10-15","2022-10-16","2022-10-17","2022-10-18"))
-df4ults$newCases <- c(0,0,93,2142)                        
-df4ults$accumCases <- 839752+cumsum(df4ults$newCases) 
-
-df4ults%<>%mutate(across(-1:-3,as.numeric))
-df4ults$epi_week <- df4ults$epi_week+1
-
-covid_br_UF%<>%bind_rows(df4ults)
+# df4ults <- as.data.frame(t(replicate(4,unlist(last(covid_br_UF)))))
+# 
+# df4ults$date <- as.Date(c("2022-10-15","2022-10-16","2022-10-17","2022-10-18"))
+# df4ults$newCases <- c(0,0,93,2142)                        
+# df4ults$accumCases <- 839752+cumsum(df4ults$newCases) 
+# 
+# df4ults%<>%mutate(across(-1:-3,as.numeric))
+# df4ults$epi_week <- df4ults$epi_week+1
+# 
+# covid_br_UF%<>%bind_rows(df4ults)
 
 ##Adicionar últimos valores DF
 }
@@ -181,6 +217,8 @@ ufs_m_movel_e_tx%<>%filter(date>as.Date("2020-02-28"))
 
 ufs_m_movel_e_tx[ufs_m_movel_e_tx<0] <- 0
 
+
+ufs_m_movel_e_tx[is.na(ufs_m_movel_e_tx)] <- 0
 tx_transmissao <- apply(ufs_m_movel_e_tx[-1],2,estimaR)
 
 tx_transmissao <- cbind(ufs_m_movel_e_tx[-1:-7,"date"],tx_transmissao)%>%pivot_longer(-date,names_to="uf",values_to="tx_trans")
@@ -193,14 +231,34 @@ tx_tr_confs <- cbind(ufs_m_movel_e_tx[-1:-7,"date"],tx_tr_confs)%>%pivot_longer(
 
 tx_transmissao <- left_join(tx_transmissao,tx_tr_confs)
 
+tx_transmissao$tx_trans <- sapply(tx_transmissao$tx_trans,min,12)
+
+
+covidbr_r <- 
+  covid_br%>%
+  mutate(newCases = ifelse(newCases<0,0,newCases))
+
+covidbr_r <- data.frame(date = covidbr_r$date[-1:-7],uf = ".BRASIL", tx_trans = estimaR(covidbr_r$newCases,covidbr_r$date),
+                        tx_trans_confs = estima_conf_sup(covidbr_r$newCases,covidbr_r$date))
+
+tx_transmissao%<>%bind_rows(covidbr_r)
+
+
+#tx_transmissao$tx_trans_confs <- sapply(tx_transmissao$tx_trans_confs,min,12.5)
+
+tx_transmissao%<>%filter(uf!=20)
 #tx_transmissao %<>%pivot_longer(-1:-2,names_to="taxa",values_to="valor")
 
-ggplot(tx_transmissao%>%filter(date>(Sys.Date()-61)),aes(date,tx_trans,col=uf))+
+tx_60 <- tx_transmissao%>%filter(date>(Sys.Date()-61))
+
+graf_tx_transm <- ggplot(tx_60,aes(date,tx_trans,col=uf))+
   geom_ribbon(aes(ymin=tx_trans,ymax=tx_trans_confs),fill = "lightblue",colour = "white",alpha=0.6)+
   geom_line()+
+  scale_y_continuous(limits=c(0,4))+
   theme_minimal()+
   facet_wrap(vars(uf))
 
+saveRDS(graf_tx_transm,"resultados/taxas_transmissao_ufs.rds")
 
 
 ufporsemana <- covid_br_UF%>%group_by(year(date),epi_week,state)%>%
@@ -214,5 +272,3 @@ ufporsemana <- covid_br_UF%>%group_by(year(date),epi_week,state)%>%
  # Intuitivamente, Rt sendo novos casos semana x / novos casos semana x-1
  ## Muito rudimentar, encontrada  versão do PAHU Harvard Analytics
  ## a partir de boletim do DF  #   mutate(across(-(1:3), ~( ./  dplyr::lag(.))))
-
-

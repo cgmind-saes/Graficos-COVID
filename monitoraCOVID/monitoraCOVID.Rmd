@@ -1,8 +1,8 @@
 ---
 title: "Relatório de Monitoramento COVID-19"   
-subtitle: "Nova onda de COVID?"
+subtitle: "Nova onda?"
 author: "Ricardo Kaminski, Isis Santos, Rodrigo Borges"
-date: "`r Sys.Date()`"
+date: "`r format.Date(Sys.Date()-1,'%d de %B de %Y')`"
 ### Uncomment the following line if a summary should be shown after the title 
 # abstract: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr."
 
@@ -31,6 +31,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE,
 # Load all your packages that you need later
 library(knitr)
 source("../requ.R")
+source("../R/paletas.R")
 ```
 
 ```{r generate-package-refs, include=FALSE}
@@ -46,9 +47,19 @@ knitr::write_bib(
 graf_01 <- readRDS("../resultados/g0_dados_europa.rds")
 
 graf_02 <- readRDS("../resultados/g2_dados_paises_europa.rds")
+
+graf_03 <- readRDS("../resultados/mortes_paises_eur.rds")
+
+graf_04 <- readRDS("../resultados/uti_eur.rds")
+
+graf_05 <- readRDS("../resultados/grafbr_novos.rds")
+
+graf_06 <- readRDS("../resultados/grafbr_uf_tots.rds")
+
+graf_07 <- readRDS("../resultados/taxas_transmissao_ufs.rds")
 ```
 
-#Introdução
+# Introdução
 
 Este relatório apresenta informações sistematizadas pela equipe da Coordenação-Geral de Monitoramento de Indicadores da Atenção Especializada à Saúde (CGMIND/SAES/MS) para utilização interna no acompanhamento epidemiológico da pandemia por Covid-19 na etapa contemporânea,passados os momentos mais críticos e emergenciais para a saúde público.
 
@@ -56,18 +67,20 @@ Os objetivos são responder às seguintes questões para Europa e Brasil:
 
 -   Está em curso mais uma onda de infecções?
 
--   Em caso afirmativo, como essa onda se comporta relativamente às duas últimas?
+-   Em caso afirmativo, como essa onda se comporta relativamente às últimas?
 
-As análises utilizaram informações publicas internacionais [@dongInteractiveWebbasedDashboard2020] e nacionais[@R-covid19br]
+As análises utilizaram informações públicas internacionais [@dongInteractiveWebbasedDashboard2020] e nacionais[@R-covid19br]
 
 # Uma nova onda de COVID?
 
-Notícias recentes sugerem a existência de uma nova onda de infecções por SARS-COV2[@2022a]. Utilizando método de quebras estruturais tradicional puramente na série de novos casos, e método proposto recentemente para o período mais recente[@otto2022], chegamos ao gráfico 1:
+Notícias recentes sugerem a existência de uma nova onda de infecções por SARS-COV2[@aljazeera2022]. Utilizando método de quebras estruturais tradicional puramente na série de novos casos[@R-strucchange], e método proposto recentemente para o período mais recente[@otto2022], chegamos ao gráfico 1:
 
 ```{r grafonda,fig.width=12, fig.height=10}
 
 graf_01+ggtitle("Gráfico 1 - Novos casos de COVID-19 na Europa e ondas identificadas por meio de testes de quebra - 2020 a 2022")
 ```
+
+Ainda que os métodos não captem todas as ondas, mostram desempenho similar para as ondas de setembro de 2020, início de 2022 e julho de 2022 (linhas verdes representam a utilização do método recentemente proposto de soma cumulativa invertida dos resíduos). O último método disponível já identifica a onda atual na Europa, deteccção marcada pela linha vermelha no gráfico.
 
 ## Evolução recente na Europa
 
@@ -75,36 +88,85 @@ O gráfico abaixo mostra a evolução do acumulado de casos para os países cuja
 
 No acumulado de casos o ângulo da subida de novos casos aumenta significativamente para França e Alemanha, os mais populosos, ou mostra forte aceleração, no caso da Itália, além de Reino Unido e Espanha, com velocidades moderadas de novos casos.
 
-A média móvel de casos nas últimas 5 semanas até 13 de outubro subiu 90% na região.
+A média móvel de casos nas últimas 5 semanas até 13 de outubro chegou a subir 90% na região.
+
+
 
 ```{r graf_eur_2,fig.width=12, fig.height=10}
 
-graf_02+ggtitle("Gráfico 2 - Total de casos de COVID-19 - Países selecionados da Europa - 2020 a 2022")
+graf_02+ggtitle("Gráfico 2 - Total de casos de COVID-19 - Países selecionados da Europa - 2020 a 2022")+scale_colour_manual(values=paleta7, name = "País")
 ```
 
-# E no Brasil?
+Do ponto de vista dos óbitos devidos a essa enfermidade, mostra-se a mortalidade por milhão de habitantes no Gráfico 3. Efetivamente registra-se elevação do número de mortes para os três países populosos e com aceleração forte do número de casos - Alemanha,França e Itália. 
 
-O maior registro de notificações de casos novos em um único dia (298.408 casos) ocorreu no dia 3 de fevereiro de 2022 e de novos óbitos (4.249 óbitos), em 8 de abril de 2021.
+
+
+```{r graf_eur_3,fig.width=12, fig.height=10}
+
+graf_03+ggtitle("Gráfico 3 - Novos óbitos por COVID-19 a cada milhão de habitantes - Países #selecionados da Europa - 2020 a 2022")+scale_colour_manual(values=paleta7)
+```
+
+
+Quanto ao tensionamento dos sistemas de saúde, mostra-se no gráfico 4 a estimativa semanal de internações em UTI por milhão de habitantes para os mesmos países:
+
+
+
+
+
+```{r graf_eur_4,fig.width=12, fig.height=10}
+
+graf_04+ggtitle("Gráfico 4 - Internações semanais em UTI por COVID-19 a cada milhão de habitantes - Países selecionados da Europa - 2020 a 2022")+scale_colour_manual(values=paleta7)
+```
+
+
+O aumento nas internações parece mais acentuado que a expansão geral da onda. Isso pode ser devido à sazonalidade, pelo período de esfriamento associado ao outono, e ao perfil de enfermos e internados, para o que pode ser oportuno estudo mais aprofundado.
+
+
 
 ## Evolução recente no Brasil
 
-###Casos
+Em 3 de fevereiro de 2022, deu-se o maior registro de notificações de casos novos no Brasil (298.408 casos em apenas um dia). O maior registro diário de novos óbitos (4.249 óbitos), por sua vez, ocorreu em 8 de abril de 2021[@brasil2022].
 
-###Hospitalizações
+A evolução de novos casos no Brasil pode ser vista no gráfico a seguir. A evolução geral não sugere que uma nova onda tenha se consolidado nas últimas semanas.
 
-###Mortes
+```{r graf_br_1,fig.width=12, fig.height=10}
 
-# Características da nova onda em curso na Europa
+graf_05+ggtitle("Gráfico 5 - Média móvel semanal de novos casos de COVID-19 - Brasil - 2020 a 2022")
 
-## As duas últmas ondas
+```
 
-###Casos
+### Evolução por Unidade Federativa
 
-###Hospitalizações
+O gráfico 6 mostra a evolução por Unidade Federativa do total acumulado de casos, para as UFs cuja população representa mais de 3% do total nacional:
 
-###Mortes
 
-## Comparativo de fases similares de cada onda
+```{r graf_br_2,fig.width=12, fig.height=10}
+
+graf_06+ggtitle("Gráfico 6 - Total de casos de COVID-19 - UFs do Brasil selecionadas  - 2020 a 2022")+scale_colour_manual(values=paleta7)
+
+```
+
+Entre os 12 estados mais populosos, como visto no gráfico, predomina um achatamento das curvas, não há em destaque nenhuma aceleração evidente.
+
+Buscando mais detalhe na análise, estimamos taxas de transmissão por UF, de acordo com o método proposto por Anne Cori e outros[@cori2013][@R-EpiEstim], ajustado coforme o trabalho conjunto entre OPAS e Harvard para a pandemia de COVID-19.
+
+O resultado está evidente no conjunto do Gráfico 7:
+
+
+
+```{r graf_br_3,fig.width=12, fig.height=20}
+
+graf_07+ggtitle("Gráfico 7 - Taxas de transmissão (Rt) estimadas de COVID-19 - UFs do Brasil - últimos 60 dias")+scale_colour_manual(values=sample(c(paleta7,paleta5,paleta3,paleta4,paleta6),27))
+
+```
+
+Podem ser identificados 3 grupos de unidades federativas. São Paulo, Minas Gerais, Rio de Janeiro, Bahia, Paraná, Rio Grande do Sul, Pernambuco, Ceará, Pará e Santa Catarina(os 10 estados de maior população), todos apresentam taxas de transmissão inferiores à unidade, o que denota arrefecimento do ciclo pandêmico. Além desses estados, no mesmo grupo situam-se Piauí*,Rondônia, Acre, Distrito Federal, Mato Grosso e  Mato Grosso do Sul, um total de 16 unidades federativas.
+
+Em um segundo grupo, com taxas recentes levemente acima da unidade, encontram-se Sergipe, Tocantins, Rio Grande do Norte, Roraima, Alagoas, Paraíba, Amazonas, Goiás e Maranhão.
+
+Apenas Amapá e Espírito Santo aparentam taxas superiores a 1,5 na taxa de transmissão estimada. Juntos, representam apenas 2,3% da população brasileira.
+
+
 
 ## Software
 
