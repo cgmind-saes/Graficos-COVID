@@ -1,6 +1,6 @@
 ---
 title: "Relatório de Monitoramento COVID-19"   
-subtitle: "Nova onda?"
+subtitle: "Possível Nova Onda"
 author: "Ricardo Kaminski, Isis Santos, Rodrigo Borges"
 date: "`r format.Date(Sys.Date()-1,'%d de %B de %Y')`"
 ### Uncomment the following line if a summary should be shown after the title 

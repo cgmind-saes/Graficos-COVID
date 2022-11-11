@@ -272,3 +272,5 @@ ufporsemana <- covid_br_UF%>%group_by(year(date),epi_week,state)%>%
  # Intuitivamente, Rt sendo novos casos semana x / novos casos semana x-1
  ## Muito rudimentar, encontrada  versão do PAHU Harvard Analytics
  ## a partir de boletim do DF  #   mutate(across(-(1:3), ~( ./  dplyr::lag(.))))
+ 
+ print(br_pops%>%left_join(tx_transmissao[tx_transmissao$date == last(tx_transmissao$date),c("uf","tx_trans")], by = c("state" = "uf")),n=28)
