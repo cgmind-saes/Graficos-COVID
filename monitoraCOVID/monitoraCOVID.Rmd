@@ -127,7 +127,7 @@ O aumento nas internações parece mais acentuado que a expansão geral da onda.
 
 Em 3 de fevereiro de 2022, deu-se o maior registro de notificações de casos novos no Brasil (298.408 casos em apenas um dia). O maior registro diário de novos óbitos (4.249 óbitos), por sua vez, ocorreu em 8 de abril de 2021[@brasil2022].
 
-A evolução de novos casos no Brasil pode ser vista no gráfico a seguir. A evolução geral não sugere que uma nova onda tenha se consolidado nas últimas semanas.
+A evolução de novos casos no Brasil pode ser vista no gráfico a seguir. A evolução geral  sugere que uma nova onda está em seu início nos últimos dias.
 
 ```{r graf_br_1,fig.width=12, fig.height=10}
 
@@ -156,7 +156,7 @@ O resultado está evidente no conjunto do Gráfico 7:
 
 ```{r graf_br_3,fig.width=12, fig.height=20}
 
-graf_07+ggtitle("Gráfico 7 - Taxas de transmissão (Rt) estimadas de COVID-19 - UFs do Brasil - últimos 60 dias")+scale_colour_manual(values=sample(c(paleta7,paleta5,paleta3,paleta4,paleta6),28))
+graf_07+ggtitle("Gráfico 7 - Taxas de transmissão (Rt) estimadas de COVID-19 - UFs do Brasil - últimos 60 dias")+scale_colour_manual(values=sample(c(paleta7,paleta5,paleta3,paleta4,paleta6),28))+theme_minimal()
 
 ```
 

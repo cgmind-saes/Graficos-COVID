@@ -219,6 +219,9 @@ ufs_m_movel_e_tx[ufs_m_movel_e_tx<0] <- 0
 
 
 ufs_m_movel_e_tx[is.na(ufs_m_movel_e_tx)] <- 0
+
+ufs_m_movel_e_tx%<>%arrange(date)
+
 tx_transmissao <- apply(ufs_m_movel_e_tx[-1],2,estimaR)
 
 tx_transmissao <- cbind(ufs_m_movel_e_tx[-1:-7,"date"],tx_transmissao)%>%pivot_longer(-date,names_to="uf",values_to="tx_trans")
