@@ -72,7 +72,7 @@ onda_europa_g <- ggplot(curva_europa,aes(date,new_cases_smoothed))+geom_line()+
   geom_vline(xintercept = data_terceira_met_novo,
              linetype = 4,colour = "green",size=2)+
   geom_vline(xintercept = curva_europa[datas_anteriores$breakpoints[c(1,3)],]$date, linetype = 3 )+
-  geom_vline(xintercept = curva_europa[datas_2022$breakpoints[3]+678,]$date,colour = "orange")+
+  geom_vline(xintercept = curva_europa[data_2022$breakpoints[3]+678,]$date,colour = "orange")+
   theme_minimal()+theme(panel.grid.minor = element_blank(),axis.text.x = element_text(angle=30))+
   scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
   scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
@@ -167,8 +167,7 @@ brufgrafnovos <- ggplot(covid_br_UF,aes(date,soma_movel_semanal,col=state))+
 
 
 
-covid_br_UF$state <- factor(covid_br_UF$state, levels = br_pops$state)
-###UFs populosas
+
 
 
 br_pops <- unique(covid_br_UF%>%select(state, pop)%>%arrange(desc(pop)))
@@ -177,6 +176,9 @@ br_pops$props_pos <- prop.table(br_pops$pop)
 
 br_pops_rel <- (br_pops%>%filter(props_pos>0.03))$state
 
+
+covid_br_UF$state <- factor(covid_br_UF$state, levels = br_pops$state)
+###UFs populosas
 
 
 brufgraftot <- ggplot(covid_br_UF%>%filter(state %in% br_pops_rel),aes(date,accumCases,col = state))+
@@ -219,6 +221,9 @@ ufs_m_movel_e_tx[ufs_m_movel_e_tx<0] <- 0
 
 
 ufs_m_movel_e_tx[is.na(ufs_m_movel_e_tx)] <- 0
+
+ufs_m_movel_e_tx%<>%arrange(date)
+
 tx_transmissao <- apply(ufs_m_movel_e_tx[-1],2,estimaR)
 
 tx_transmissao <- cbind(ufs_m_movel_e_tx[-1:-7,"date"],tx_transmissao)%>%pivot_longer(-date,names_to="uf",values_to="tx_trans")
