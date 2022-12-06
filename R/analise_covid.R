@@ -131,6 +131,18 @@ covid_br <- readRDS(url("https://github.com/dest-ufmg/covid19repo/blob/master/da
 
 ##Geral Brasil
 
+###Ver as ondas do brasil
+#Com método novo
+# data_nova_onda <- backCUSUM::breakpoint.est(ceur_ts[-(1:retant)]~1)+retant
+# 
+# data_primeira_met_novo <- curva_europa[backCUSUM::breakpoint.est(ceur_ts[1:648]~1),]$date
+# 
+# data_segunda_met_novo <- curva_europa[backCUSUM::breakpoint.est(ceur_ts[342:length(ceur_ts)]~1),]$date+341
+# 
+# 
+# data_terceira_met_novo <- curva_europa[backCUSUM::breakpoint.est(ceur_ts[800:969]~1),]$date+799
+
+
 brgraftot <- ggplot(covid_br,aes(date,accumCases))+
   geom_line()+theme_minimal()+
   theme(panel.grid.minor = element_blank(),axis.text.x = element_text(angle=30))+
@@ -147,6 +159,9 @@ brgrafnovos <- ggplot(covid_br,aes(date,media_movel_semanal_novos))+
   scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
   scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
   ylab("Novos Casos")+xlab("Periodo")
+
+
+
 
 saveRDS(brgrafnovos,"resultados/grafbr_novos.rds")
 
@@ -254,9 +269,9 @@ tx_transmissao%<>%filter(uf!=20)
 
 tx_60 <- tx_transmissao%>%filter(date>(Sys.Date()-61))
 
-graf_tx_transm <- ggplot(tx_60,aes(date,tx_trans,col=uf))+
+graf_tx_transm <- ggplot(tx_transmissao,aes(date,tx_trans,col=uf))+
   geom_ribbon(aes(ymin=tx_trans,ymax=tx_trans_confs),fill = "lightblue",colour = "white",alpha=0.6)+
-  geom_line()+
+  geom_line(stat = "smooth")+
   scale_y_continuous(limits=c(0,4))+
   theme_minimal()+
   facet_wrap(vars(uf))
