@@ -133,14 +133,15 @@ covid_br <- readRDS(url("https://github.com/dest-ufmg/covid19repo/blob/master/da
 
 ###Ver as ondas do brasil
 #Com método novo
-# data_nova_onda <- backCUSUM::breakpoint.est(ceur_ts[-(1:retant)]~1)+retant
+br_novosts <-  ts(covid_br$newCases, start=c(2020,56),frequency=365)
+ondasbr <- backCUSUM::breakpoint.est(br_novosts[-(1:(retant-31))]~1)+(retant-31)
 # 
-# data_primeira_met_novo <- curva_europa[backCUSUM::breakpoint.est(ceur_ts[1:648]~1),]$date
+primonda <- covid_br[backCUSUM::breakpoint.est(br_novosts[1:648]~1),]$date
 # 
-# data_segunda_met_novo <- curva_europa[backCUSUM::breakpoint.est(ceur_ts[342:length(ceur_ts)]~1),]$date+341
+segondabr <- covid_br[backCUSUM::breakpoint.est(br_novosts[342:770]~1),]$date+341
 # 
 # 
-# data_terceira_met_novo <- curva_europa[backCUSUM::breakpoint.est(ceur_ts[800:969]~1),]$date+799
+terondabr <- covid_br[backCUSUM::breakpoint.est(br_novosts[800:(retant-121)]~1),]$date+799
 
 
 brgraftot <- ggplot(covid_br,aes(date,accumCases))+
@@ -154,7 +155,15 @@ brgraftot <- ggplot(covid_br,aes(date,accumCases))+
 covid_br%<>%mutate(media_movel_semanal_novos = frollmean(newCases,6,align="right",na.rm=T))
 
 brgrafnovos <- ggplot(covid_br,aes(date,media_movel_semanal_novos))+
-  geom_line()+theme_minimal()+
+  geom_line(size = 2)+theme_minimal()+
+  geom_vline(xintercept = primonda,
+             linetype = 3,colour = paleta5[5], size = 1.5)+
+  geom_vline(xintercept = segondabr,
+             linetype = 3,colour = paleta5[5], size = 1.5)+
+  geom_vline(xintercept = terondabr,
+             linetype = 3,colour = paleta5[5],size=1.5)+
+  geom_vline(xintercept = covid_br[ondasbr,]$date,
+             linetype = 3,colour = paleta5[5],size=2)+
   theme(panel.grid.minor = element_blank(),axis.text.x = element_text(angle=30))+
   scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
   scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
