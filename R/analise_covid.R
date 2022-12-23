@@ -40,7 +40,7 @@ curva_europa <- covid_eu_c%>%filter(iso_code == "OWID_EUR")%>%select(date,new_ca
 
 curva_europa$total_cases <- cumsum(curva_europa$new_cases)
 
-retant <- 939
+retant <- 939+70
 
 ceur_ts <- ts(curva_europa$new_cases, start=c(2020,23),frequency=365)
 
@@ -51,6 +51,8 @@ data_2022 <- breakpoints(ceur_ts[-(1:648)]~time(ceur_ts[-(1:648)]))
 
 #Com método novo
 data_nova_onda <- backCUSUM::breakpoint.est(ceur_ts[-(1:retant)]~1)+retant
+
+data_nova_onda_ant <- backCUSUM::breakpoint.est(ceur_ts[(retant-70):retant]~1)+retant-70
 
 data_primeira_met_novo <- curva_europa[backCUSUM::breakpoint.est(ceur_ts[1:648]~1),]$date
 
@@ -63,6 +65,8 @@ data_terceira_met_novo <- curva_europa[backCUSUM::breakpoint.est(ceur_ts[800:969
 #Plotado
 
 onda_europa_g <- ggplot(curva_europa,aes(date,new_cases_smoothed))+geom_line()+
+  geom_vline(xintercept = curva_europa[data_nova_onda_ant,]$date,
+             linetype = 4,colour = "purple", size = 1.5)+
   geom_vline(xintercept = curva_europa[data_nova_onda,]$date,
              linetype = 4,colour = "indianred", size = 1.5)+
   geom_vline(xintercept = data_primeira_met_novo,
@@ -97,6 +101,11 @@ medsem <- function(x){
 }
 
 
+novos_casos_eur <- dados_covid%>%
+  filter(iso_code %in% eur_pops_rel)%>%select(date,location,new_cases_smoothed_per_million)%>%
+  group_by(location,date)
+
+
 
 hos_mort <- dados_covid%>%
   filter(iso_code %in% eur_pops_rel)%>%select(date,location,hosp_patients,icu_patients_per_million,new_deaths_smoothed_per_million)%>%
@@ -117,9 +126,19 @@ uti_covids <- ggplot(hos_mort%>%filter(year(date)>2020),aes(date,icu_patients_pe
   ylab("Internados UTI por COVID-19 por milhão de hab.")+xlab("Periodo")
 
 
+ncgr <- ggplot(novos_casos_eur%>%filter(year(date)>2020),aes(date,new_cases_smoothed_per_million,col=location))+geom_line()+
+  theme_minimal()+theme(panel.grid.minor = element_blank(),axis.text.x = element_text(angle=30))+
+  scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
+  scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
+  ylab("Novos casos por COVID-19 por milhão de hab.")+xlab("Periodo")
+
+
 saveRDS(mortesgr,"resultados/mortes_paises_eur.rds")
 
 saveRDS(uti_covids,"resultados/uti_eur.rds")
+
+
+
 ###Brasil
 
 
@@ -152,7 +171,8 @@ brgraftot <- ggplot(covid_br,aes(date,accumCases))+
   ylab("Total de Casos")+xlab("Período")
 
 
-covid_br%<>%mutate(media_movel_semanal_novos = frollmean(newCases,6,align="right",na.rm=T))
+covid_br%<>%mutate(media_movel_semanal_novos = frollmean(newCases,6,align="right",na.rm=T),
+                   media_movel_semanal_mortes_novas = frollmean(newDeaths,6,align="right",na.rm=T))
 
 brgrafnovos <- ggplot(covid_br,aes(date,media_movel_semanal_novos))+
   geom_line(size = 2)+theme_minimal()+
@@ -172,7 +192,29 @@ brgrafnovos <- ggplot(covid_br,aes(date,media_movel_semanal_novos))+
 
 
 
+
+
+
 saveRDS(brgrafnovos,"resultados/grafbr_novos.rds")
+
+#Mortes
+brgrafnovos_mrt <- ggplot(covid_br,aes(date,media_movel_semanal_mortes_novas))+
+  geom_line(size = 2)+theme_minimal()+
+  geom_vline(xintercept = primonda,
+             linetype = 3,colour = paleta5[5], size = 1.5)+
+  geom_vline(xintercept = segondabr,
+             linetype = 3,colour = paleta5[5], size = 1.5)+
+  geom_vline(xintercept = terondabr,
+             linetype = 3,colour = paleta5[5],size=1.5)+
+  geom_vline(xintercept = covid_br[ondasbr,]$date,
+             linetype = 3,colour = paleta5[5],size=2)+
+  theme(panel.grid.minor = element_blank(),axis.text.x = element_text(angle=30))+
+  scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
+  scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
+  ylab("Novos Casos")+xlab("Periodo")
+
+
+saveRDS(brgrafnovos_mrt,"resultados/grafbrmrts.rds")
 
 
 ##Nível Estadual

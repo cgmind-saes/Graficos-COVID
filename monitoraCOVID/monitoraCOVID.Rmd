@@ -1,6 +1,6 @@
 ---
 title: "Relatório de Monitoramento COVID-19"   
-subtitle: "Nova onda confirmada no Brasil"
+subtitle: "A onda atualN no Brasil"
 author: "Isis Santos, Rodrigo Borges"
 date: "`r format.Date(Sys.Date()-1,'%d de %B de %Y')`"
 ### Uncomment the following line if a summary should be shown after the title 
@@ -54,14 +54,16 @@ graf_04 <- readRDS("../resultados/uti_eur.rds")
 
 graf_05 <- readRDS("../resultados/grafbr_novos.rds")
 
-graf_06 <- readRDS("../resultados/grafbr_uf_tots.rds")
+graf_06 <- readRDS("../resultados/grafbrmrts.rds")
 
-graf_07 <- readRDS("../resultados/taxas_transmissao_ufs.rds")
+graf_07 <- readRDS("../resultados/grafbr_uf_tots.rds")
+
+graf_08 <- readRDS("../resultados/taxas_transmissao_ufs.rds")
 ```
 
 # Introdução
 
-Este relatório apresenta informações sistematizadas pela equipe da Coordenação-Geral de Monitoramento de Indicadores da Atenção Especializada à Saúde (CGMIND/SAES/MS) para utilização interna no acompanhamento epidemiológico da pandemia por Covid-19 na etapa contemporânea,passados os momentos mais críticos e emergenciais para a saúde público.
+Este relatório apresenta informações sistematizadas pela equipe da Coordenação-Geral de Monitoramento de Indicadores da Atenção Especializada à Saúde (CGMIND/SAES/MS) para utilização interna no acompanhamento epidemiológico da pandemia por Covid-19 na etapa contemporânea,passados os momentos mais críticos e emergenciais para a saúde pública.
 
 Os objetivos são responder às seguintes questões para Europa e Brasil:
 
@@ -80,7 +82,7 @@ Notícias recentes sugerem a existência de uma nova onda de infecções por SAR
 graf_01+ggtitle("Gráfico 1 - Novos casos de COVID-19 na Europa e ondas identificadas por meio de testes de quebra - 2020 a 2022")
 ```
 
-Ainda que os métodos não captem todas as ondas, mostram desempenho similar para as ondas de setembro de 2020, início de 2022 e julho de 2022 (linhas verdes representam a utilização do método recentemente proposto de soma cumulativa invertida dos resíduos). O último método disponível já identifica a onda atual na Europa, deteccção marcada pela linha vermelha no gráfico.
+Ainda que os métodos não captem todas as ondas, mostram desempenho similar para as ondas de setembro de 2020, início de 2022 e julho de 2022 (linhas verdes representam a utilização do método recentemente proposto de soma cumulativa invertida dos resíduos). O último método disponível já identifica a onda atual na Europa, detecção marcada pela linha vermelha no gráfico.
 
 ## Evolução recente na Europa
 
@@ -127,22 +129,30 @@ O aumento nas internações parece mais acentuado que a expansão geral da onda.
 
 Em 3 de fevereiro de 2022, deu-se o maior registro de notificações de casos novos no Brasil (298.408 casos em apenas um dia). O maior registro diário de novos óbitos (4.249 óbitos), por sua vez, ocorreu em 8 de abril de 2021[@brasil2022].
 
-A evolução de novos casos no Brasil pode ser vista no gráfico a seguir. A evolução geral  sugere que uma nova onda está em seu início nos últimos dias.
+A evolução de novos casos no Brasil pode ser vista no gráfico a seguir. A evolução geral  confirma a atual onda está, em seu início desde meados de novembro.
 
 ```{r graf_br_1,fig.width=12, fig.height=10}
 
 graf_05+ggtitle("Gráfico 5 - Média móvel semanal de novos casos de COVID-19 - Brasil - 2020 a 2022")
 
 ```
-
-### Evolução por Unidade Federativa
-
-O gráfico 6 mostra a evolução por Unidade Federativa do total acumulado de casos, para as UFs cuja população representa mais de 3% do total nacional:
-
+Ainda que partindo de patamar bastante reduzido, e valores inferiores ao da onda precedente, para alem de eventuais problemas de subnotificacao, o crescimento do volume de mortes, indicado no Grafico 6, preocupa.
 
 ```{r graf_br_2,fig.width=12, fig.height=10}
 
-graf_06+ggtitle("Gráfico 6 - Total de casos de COVID-19 - UFs do Brasil selecionadas  - 2020 a 2022")+scale_colour_manual(values=paleta7)
+graf_06+ggtitle("Gráfico 6 - Média móvel semanal de novos casos de COVID-19 - Brasil - 2020 a 2022")
+
+```
+
+
+### Evolução por Unidade Federativa
+
+O gráfico 7 mostra a evolução por Unidade Federativa do total acumulado de casos, para as UFs cuja população representa mais de 3% do total nacional:
+
+
+```{r graf_br_3,fig.width=12, fig.height=10}
+
+graf_07+ggtitle("Gráfico 6 - Total de casos de COVID-19 - UFs do Brasil selecionadas  - 2020 a 2022")+scale_colour_manual(values=paleta7)
 
 ```
 
@@ -150,13 +160,13 @@ Entre os 12 estados mais populosos, como visto no gráfico, predomina um achatam
 
 Buscando mais detalhe na análise, estimamos taxas de transmissão por UF, de acordo com o método proposto por Anne Cori e outros[@cori2013][@R-EpiEstim], ajustado coforme o trabalho conjunto entre OPAS e Harvard para a pandemia de COVID-19.
 
-O resultado está evidente no conjunto do Gráfico 7:
+O resultado está evidente no conjunto do Gráfico 8:
 
 
 
-```{r graf_br_3,fig.width=12, fig.height=20}
+```{r graf_br_4,fig.width=12, fig.height=20}
 
-graf_07+ggtitle("Gráfico 7 - Taxas de transmissão (Rt) estimadas de COVID-19 - UFs do Brasil - últimos 60 dias")+scale_colour_manual(values=sample(c(paleta7,paleta5,paleta3,paleta4,paleta6),28))+theme_minimal()
+graf_08+ggtitle("Gráfico 7 - Taxas de transmissão (Rt) estimadas de COVID-19 - UFs do Brasil")+scale_colour_manual(values=sample(c(paleta7,paleta5,paleta3,paleta4,paleta6),28))+theme_minimal()
 
 ```
 
