@@ -1,6 +1,6 @@
 ---
 title: "Relatório de Monitoramento COVID-19"   
-subtitle: "A onda atualN no Brasil"
+subtitle: "A onda atual no Brasil"
 author: "Isis Santos, Rodrigo Borges"
 date: "`r format.Date(Sys.Date()-1,'%d de %B de %Y')`"
 ### Uncomment the following line if a summary should be shown after the title 
@@ -129,7 +129,7 @@ O aumento nas internações parece mais acentuado que a expansão geral da onda.
 
 Em 3 de fevereiro de 2022, deu-se o maior registro de notificações de casos novos no Brasil (298.408 casos em apenas um dia). O maior registro diário de novos óbitos (4.249 óbitos), por sua vez, ocorreu em 8 de abril de 2021[@brasil2022].
 
-A evolução de novos casos no Brasil pode ser vista no gráfico a seguir. A evolução geral  confirma a atual onda está, em seu início desde meados de novembro.
+A evolução de novos casos no Brasil pode ser vista no gráfico a seguir. A evolução geral **confirma uma onda em andamento, com início desde meados de novembro**.
 
 ```{r graf_br_1,fig.width=12, fig.height=10}
 
@@ -140,7 +140,7 @@ Ainda que partindo de patamar bastante reduzido, e valores inferiores ao da onda
 
 ```{r graf_br_2,fig.width=12, fig.height=10}
 
-graf_06+ggtitle("Gráfico 6 - Média móvel semanal de novos casos de COVID-19 - Brasil - 2020 a 2022")
+graf_06+ggtitle("Gráfico 6 - Média móvel semanal de novos óbitos de COVID-19 - Brasil - 2020 a 2022")
 
 ```
 
@@ -156,7 +156,7 @@ graf_07+ggtitle("Gráfico 6 - Total de casos de COVID-19 - UFs do Brasil selecio
 
 ```
 
-Entre os 12 estados mais populosos, como visto no gráfico, predomina um achatamento das curvas, não há em destaque nenhuma aceleração evidente.
+Entre os 12 estados mais populosos, como visto no gráfico, predominam curvas mais acentuadas que nas semanas anteriores a novembro e posteriores à onda de meados de 2022.Algumas delas, inclusive, sugerem aceleração recente sustentada.
 
 Buscando mais detalhe na análise, estimamos taxas de transmissão por UF, de acordo com o método proposto por Anne Cori e outros[@cori2013][@R-EpiEstim], ajustado coforme o trabalho conjunto entre OPAS e Harvard para a pandemia de COVID-19.
 
@@ -170,12 +170,13 @@ graf_08+ggtitle("Gráfico 7 - Taxas de transmissão (Rt) estimadas de COVID-19 -
 
 ```
 
-Podem ser identificados 3 grupos de unidades federativas. São Paulo, Minas Gerais, Rio de Janeiro, Bahia, Paraná, Rio Grande do Sul, Pernambuco, Ceará, Pará e Santa Catarina(os 10 estados de maior população), todos apresentam taxas de transmissão inferiores à unidade, o que denota arrefecimento do ciclo pandêmico. Além desses estados, no mesmo grupo situam-se Piauí*,Rondônia, Acre, Distrito Federal, Mato Grosso e  Mato Grosso do Sul, um total de 16 unidades federativas.
+Podem ser identificados 3 grupos de unidades federativas. 
 
-Em um segundo grupo, com taxas recentes levemente acima da unidade, encontram-se Sergipe, Tocantins, Rio Grande do Norte, Roraima, Alagoas, Paraíba, Amazonas, Goiás e Maranhão.
+Próximos ou superiores a 1,5 de taxa de transmissão estimada, encontram-se 12 unidades federativas: Alagoas, Distrito Federal, Espírito Santo, Mínas Gerais,Mato Grosso, Paraíba, Paraná, Rio Grande do Norte, Rondônia, Rio Grande do Sul, Sergipe e Tocantins.
 
-Apenas Amapá e Espírito Santo aparentam taxas superiores a 1,5 na taxa de transmissão estimada. Juntos, representam apenas 2,3% da população brasileira.
+Outros 14 estados apresentam taxas de transmissão superiores à unidade já por várias semanas: Acre, Amapá, Bahia, Ceará, Goiás, Maranhão, Mato Grosso do Sul, Pará, Pernambuco, Piauí, Rio de Janeiro, Roraima, Santa Catarina e São Paulo. Apenas o Amazonas aparece com taxa de transmissão estimada abaixo da unidade nas últimas semanas.
 
+Desta forma, sobram evidências da última onda em curso. E a possibilidade de que a onda atual supere a anterior não são insignificantes, em particular pelo fato de não estar evidente um pico próximo da mesma.
 
 
 ## Software

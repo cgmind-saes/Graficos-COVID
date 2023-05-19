@@ -211,12 +211,34 @@ brgrafnovos_mrt <- ggplot(covid_br,aes(date,media_movel_semanal_mortes_novas))+
   theme(panel.grid.minor = element_blank(),axis.text.x = element_text(angle=30))+
   scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
   scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
-  ylab("Novos Casos")+xlab("Periodo")
+  ylab("Novos óbitos")+xlab("Periodo")
 
 
 saveRDS(brgrafnovos_mrt,"resultados/grafbrmrts.rds")
 
 
+# ###https://opendatasus.saude.gov.br/dataset/registro-de-ocupacao-hospitalar-covid-19
+# #linkopentohcovid <- "https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/LEITOS/2022-12-31/esus-vepi.LeitoOcupacao_2022.csv"
+# tohc19 <- "dadosrefs/toh_c19.csv"
+# #download.file(linkopentohcovid,tohc19)
+# 
+# tohc19 <- read_csv(tohc19)
+# 
+# tochc19_ind <- tohc19%>%
+#   group_by(lubridate::week(dataNotificacao),ocupacaoHospitalarUti>65)%>%
+#   summarize(tohmedia = median(ocupacaoHospitalarUti,na.rm=T),ntohalta = n())
+# 
+# tochc19_ind%<>%pivot_wider(names_from = `ocupacaoHospitalarUti > 65`,values_from = c(tohmedia,ntohalta))
+# 
+# tochc19_ind[[1]] <- Sys.Date()-373+7*tochc19_ind[[1]]
+# 
+# names(tochc19_ind) <- c("data","tohmedia_baixa_oc","tohmedia_alta_oc","ntoh_baixa_ocupacao","ntoh_alta_ocupacao")
+# 
+# tochc19_ind$propalta <- tochc19_ind$ntoh_alta_ocupacao/(tochc19_ind$ntoh_alta_ocupacao+tochc19_ind$ntoh_baixa_ocupacao)
+# 
+# ggplot(tochc19_ind,aes(x=data,y=tohmedia_alta_oc))+
+#   geom_line()+
+#   theme_minimal()
 ##Nível Estadual
 
 covid_br_UF <- readRDS(url("https://github.com/dest-ufmg/covid19repo/blob/master/data/states.rds?raw=true",method="wininet"))
@@ -230,6 +252,7 @@ brufgrafnovos <- ggplot(covid_br_UF,aes(date,soma_movel_semanal,col=state))+
   scale_y_continuous(labels = scales::number_format(big.mark = ".",decimal.mark = ","))+
   scale_x_date(date_breaks = "3 months", labels = scales::date_format("%b/%Y"))+
   ylab("Média móvel semanal de novos casos")+xlab("Período")
+
 
 
 
